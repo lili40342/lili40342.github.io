@@ -239,7 +239,7 @@ pre {
   position: relative;
   text-align: center;
   line-height: 0;
-  height: 260px;
+  height: 300px;
   width: 100%;
   background: #fff center 85%;
   background-repeat: repeat;
@@ -490,8 +490,10 @@ pre {
   color: #666666;
 }
 .post .post-body {
+  /*
   margin-top: 15px;
-  padding: 25px 0;
+  */
+  padding: 0 0 25px;
   border-top: 1px solid #eee;
   overflow: hidden;
 }
@@ -1319,7 +1321,7 @@ pre {
   width: 100%;
   padding: 0 20px;
   margin: 20px auto;
-  background: url(../img/timeline.gif) repeat-y 207px 0;
+  background: url(../img/timeline.png) repeat-y 207px 0;
   overflow: hidden;
 }
 .timeline h2 {
@@ -1330,7 +1332,7 @@ pre {
   font-weight: bold;
   padding-left: 75px;
   margin-bottom: 25px;
-  background: url(../img/timeline-clock.gif) #fff no-repeat 165px 0;
+  background: url(../img/timeline-clock.png) #fff no-repeat 165px 0;
 }
 .timeline h2 img {
   vertical-align: -5px;
@@ -1341,7 +1343,7 @@ pre {
   padding: 0;
 }
 .timeline ul li {
-  background: url(../img/timeline-dot.gif) no-repeat 180px 5px;
+  background: url(../img/timeline-dot.png) no-repeat 180px 5px;
   padding-bottom: 20px;
   zoom: 1;
   text-overflow: ellipsis;
