@@ -19,10 +19,14 @@
     <link rel="dns-prefetch" href="http://lili40342.github.io">
     <!--SEO-->
 
-<meta name="keywords" content="Java,Spring,SpringBoot,SpringCloud,Oracle,MySQL,数据库,微服务,架构" />
+<meta name="keywords" content="Java" />
 
 
-<meta name="description" content="开始在 Java 中，Class.forName() 和 ClassLoader 用的其实并不是很多，仔细回忆这两个东西，您是在什么时候才用过它们呢？？？其实随着您的回忆当初在学习 Java 连..." />
+<meta name="description" content="
+    
+
+
+开始在 Java 中，Class.forName() 和 ClassLoader 用的其实并不是很多，仔细回忆这两个东西，您是在什么时候才用过它们呢？？？其实随着您的回忆当初在学..." />
 
 
 <meta name="robots" content="all" />
@@ -154,21 +158,25 @@
             
         </h1>
         <div class="post-meta">
+	
 	<span class="fa-wrap">
         <i class="fa fa-user"></i>
         <span class="date-meta">
             Lee</span>
     </span>
+	
     
     <span class="categories-meta fa-wrap">
-        <i class="fa fa-sticky-note"></i>
-        
+        <i class="fa fa-book"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
     </span>
     
     
     <span class="fa-wrap">
         <i class="fa fa-tags"></i>
         <span class="tags-meta">
+            
+            <a class="tag-link" href="/tags/Java/" rel="tag">Java</a>
             
         </span>
     </span>
@@ -178,7 +186,7 @@
     <span class="fa-wrap">
         <i class="fa fa-calendar"></i>
         <span class="date-meta">
-            2020/06/25</span>
+            2020/06/11</span>
     </span>
     
     
@@ -186,7 +194,11 @@
     </div>
     
     <div class="post-body post-content">
-        <h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>在 Java 中，Class.forName() 和 ClassLoader 用的其实并不是很多，仔细回忆这两个东西，您是在什么时候才用过它们呢？？？其实随着您的回忆当初在学习 Java 连接数据库的时候你用到 Class.forName() ，而 ClassLoader 应该是在我们熟悉的 Spring 框架中的 IOC 的实现用的较多了。</p>
+        <div align="center">
+    <img src="/img/post/java.png" border="0"/>
+</div>
+
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>在 Java 中，Class.forName() 和 ClassLoader 用的其实并不是很多，仔细回忆这两个东西，您是在什么时候才用过它们呢？？？其实随着您的回忆当初在学习 Java 连接数据库的时候你用到 Class.forName() ，而 ClassLoader 应该是在我们熟悉的 Spring 框架中的 IOC 的实现用的较多了。</p>
 <h3 id="稍作分析"><a href="#稍作分析" class="headerlink" title="稍作分析"></a>稍作分析</h3><p>在 Java 中 Class.forName() 和 ClassLoader 可以”粗浅”的理解他们都是对类进行加载。ClassLoader 可以实现的功能是通过一个类的全限定名来获取描述此类的二进制字节流，获取到二进制流后放到JVM中。Class.forName() 方法实际上也是调用的ClassLoader 来实现的，其实我们通过 Class.forName() 的源码就可以看到：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; forName(String className)</span><br><span class="line">            <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">    Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">    <span class="keyword">return</span> forName0(className, <span class="keyword">true</span>, ClassLoader.getClassLoader(caller), caller);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>最后的 return 中调用了一个 forName0 方法，方法的第二个参数默认是 true，通过阅读源码得知这个参数代表是否对加载的类进行初始化，设置为 true 时会类进行初始化，代表会执行类中的静态代码块，以及对静态变量的赋值等操作。</p>
@@ -207,7 +219,7 @@
 <h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>看到上面的举例之后，想想 Class.forName() 的应用，就是在 JDBC 中使用，通过使用 Class.forName() 方法来加载数据库连接驱动。其实很好理解，我们利用 JDBC 如果去连接数据库？？？第一步通过 Class.forName() 加载数据库驱动，通过我们分析知道  Class.forName() 会自动初始化类，因为 JDBC 中明确规定要求 Driver(数据库驱动)类必须向 DriverManager 注册自己，通过观看数据库连接驱动类的源码就可以知道它为什么要用 Class.forName() 了：</p>
 <p>以MySQL驱动为例源码片段如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Driver</span> <span class="keyword">extends</span> <span class="title">NonRegisteringDriver</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">sql</span>.<span class="title">Driver</span> </span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Register ourselves with the DriverManager</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            java.sql.DriverManager.registerDriver(<span class="keyword">new</span> Driver());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException E) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Can't register driver!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Construct a new driver and register it with DriverManager</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException</span></span><br><span class="line"><span class="comment">     *             if a database error occurs.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Driver</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="comment">// Required for Class.forName().newInstance()</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们看到 Driver 注册到 DriverManager 中的操作写在了静态代码块中，这就是为什么在写 JDBC 时使用 Class.forName() 的原因了。至于 ClassLoader 我们就不做太细致的研究了，如果你有兴趣请移步“Java中的ClassLoader” 。</p>
+<p>我们看到 Driver 注册到 DriverManager 中的操作写在了静态代码块中，这就是为什么在写 JDBC 时使用 Class.forName() 的原因了。至于 ClassLoader 我们就不做太细致的研究了，如果你有兴趣请移步<a href="/2474365000.html">《Java中的ClassLoader》</a> 。</p>
 
     </div>
     
@@ -226,17 +238,17 @@
 </article>
 <div class="article-nav prev-next-wrap clearfix">
     
-    <a href="/400897285.html" class="pre-post btn btn-default" title='HashMap是如何遍历的'>
+    <a href="/3742853179.html" class="pre-post btn btn-default" title='另类分析String，StringBuffer和StringBuilder'>
         <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
         <span class="hidden-xs">
-            HashMap是如何遍历的</span>
+            另类分析String，StringBuffer和StringBuilder</span>
     </a>
     
     
-    <a href="/2358994905.html" class="next-post btn btn-default" title='Lombok的分析与讨论'>
+    <a href="/2474365000.html" class="next-post btn btn-default" title='Java中的ClassLoader'>
         <span class="hidden-lg">下一篇</span>
         <span class="hidden-xs">
-            Lombok的分析与讨论</span><i class="fa fa-angle-right fa-fw"></i>
+            Java中的ClassLoader</span><i class="fa fa-angle-right fa-fw"></i>
     </a>
     
 </div>

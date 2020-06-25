@@ -19,10 +19,14 @@
     <link rel="dns-prefetch" href="http://lili40342.github.io">
     <!--SEO-->
 
-<meta name="keywords" content="Java,Spring,SpringBoot,SpringCloud,Oracle,MySQL,数据库,微服务,架构" />
+<meta name="keywords" content="Java,StringBuffer,StringBuilder" />
 
 
-<meta name="description" content="开始String，StringBuffer 和 StringBuilder 直接的区别这个问题已经是一个老问题了，尤其是在面试的时候会被经常提及的问题。首先 String 类型并不是 Java ..." />
+<meta name="description" content="
+    
+
+
+开始String，StringBuffer 和 StringBuilder 直接的区别这个问题已经是一个老问题了，尤其是在面试的时候会被经常提及的问题。首先 String 类型并..." />
 
 
 <meta name="robots" content="all" />
@@ -154,21 +158,25 @@
             
         </h1>
         <div class="post-meta">
+	
 	<span class="fa-wrap">
         <i class="fa fa-user"></i>
         <span class="date-meta">
             Lee</span>
     </span>
+	
     
     <span class="categories-meta fa-wrap">
-        <i class="fa fa-sticky-note"></i>
-        
+        <i class="fa fa-book"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
     </span>
     
     
     <span class="fa-wrap">
         <i class="fa fa-tags"></i>
         <span class="tags-meta">
+            
+            <a class="tag-link" href="/tags/Java/" rel="tag">Java</a> <a class="tag-link" href="/tags/StringBuffer/" rel="tag">StringBuffer</a> <a class="tag-link" href="/tags/StringBuilder/" rel="tag">StringBuilder</a>
             
         </span>
     </span>
@@ -178,7 +186,7 @@
     <span class="fa-wrap">
         <i class="fa fa-calendar"></i>
         <span class="date-meta">
-            2020/06/25</span>
+            2020/06/15</span>
     </span>
     
     
@@ -186,7 +194,11 @@
     </div>
     
     <div class="post-body post-content">
-        <h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>String，StringBuffer 和 StringBuilder 直接的区别这个问题已经是一个老问题了，尤其是在面试的时候会被经常提及的问题。首先 String 类型并不是 Java 语言的基本类型，它是 Java 中非常重要的一个引用类型（对象）。String 字符串一旦被创建出来就不会被修改，当你想修改 StringBuffer 或者是 StringBuilder，出于效率的考量，虽然 String 可以通过 + 来创建多个对象达到字符串拼接的效果，但是这种拼接的效率相比 StringBuffer 和 StringBuilder，效率上就差了点。</p>
+        <div align="center">
+    <img src="/img/post/java.png" border="0"/>
+</div>
+
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>String，StringBuffer 和 StringBuilder 直接的区别这个问题已经是一个老问题了，尤其是在面试的时候会被经常提及的问题。首先 String 类型并不是 Java 语言的基本类型，它是 Java 中非常重要的一个引用类型（对象）。String 字符串一旦被创建出来就不会被修改，当你想修改 StringBuffer 或者是 StringBuilder，出于效率的考量，虽然 String 可以通过 + 来创建多个对象达到字符串拼接的效果，但是这种拼接的效率相比 StringBuffer 和 StringBuilder，效率上就差了点。</p>
 <h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>上面说到，String 字符串一旦被创建出来就不会被修改，其实很好理解。我们查看 String 类的源码即可得知（代码片段）：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">String</span>&gt;, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line">	......</span><br><span class="line">	......</span><br><span class="line">	......</span><br></pre></td></tr></table></figure>
 <p>上面代码其中 String 类已经被 final 修饰，用于存放字符的数组也被声明为 final，因此只能赋值一次，不可再更改。使用 final 修饰的类不能被继承、方法不能被重写、属性不能被修改。阅读了源码之后就能知道，String 类它其中的方法也是由 final 修饰的，所以，String 类就是一个典型的 Immutable 类。也由于 String 的不可变性，类似字符串拼接、字符串截取等操作都会产生新的 String 对象。所以我们在研究 String 的时候就会引入一个概念叫做“常量池”，如果再深入的话就会碰到堆与栈的问题了。研究那么深其实并没有太大的实际意义，毕竟我们都是以实用为主，所以我们只做基本性质的讨论。</p>
@@ -241,17 +253,17 @@
 </article>
 <div class="article-nav prev-next-wrap clearfix">
     
-    <a href="/2242648824.html" class="pre-post btn btn-default" title='渐行渐远的JSP'>
+    <a href="/2358994905.html" class="pre-post btn btn-default" title='Lombok的分析与讨论'>
         <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
         <span class="hidden-xs">
-            渐行渐远的JSP</span>
+            Lombok的分析与讨论</span>
     </a>
     
     
-    <a href="/2784153059.html" class="next-post btn btn-default" title='Java中的泛型'>
+    <a href="/583267688.html" class="next-post btn btn-default" title='Class.forName和ClassLoader'>
         <span class="hidden-lg">下一篇</span>
         <span class="hidden-xs">
-            Java中的泛型</span><i class="fa fa-angle-right fa-fw"></i>
+            Class.forName和ClassLoader</span><i class="fa fa-angle-right fa-fw"></i>
     </a>
     
 </div>
