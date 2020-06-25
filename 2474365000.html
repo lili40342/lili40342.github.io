@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Lee的架构笔记">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://lili40342.github.io">
+    <!--SEO-->
+
+<meta name="keywords" content="Java,Spring,SpringBoot,SpringCloud,Oracle,MySQL,数据库,微服务,架构" />
+
+
+<meta name="description" content="基本概念ClassLoader 是一个重要的 Java 执行时系统组件，它负责在运行时查找和装入 Class 字节码文件。JVM 在运行时会产生三个ClassLoader：根装载器、扩展类装载器..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Java中的ClassLoader |
+    
+    Lee的架构笔记
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Lee的架构笔记" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<script>
+(function() {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    /./img/banner2.jpg)"
+     >
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://lili40342.github.io">
+                        Lee的架构笔记</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation">
+                            <a href="/"><i class="fa fa-home"></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://github.com/lili40342" target="_blank" rel="noopener"><i class="fa fa-github"></i>
+                                GitHub</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://juejin.im/user/5e32e0e651882526b832024f" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                掘金社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://blog.csdn.net/lili40342" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                CSDN社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/archives/"><i class="fa fa-clock-o"></i>
+                                归档</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/about/"><i class="fa fa-user-circle"></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Java中的ClassLoader">
+            
+            Java中的ClassLoader
+            
+        </h1>
+        <div class="post-meta">
+	<span class="fa-wrap">
+        <i class="fa fa-user"></i>
+        <span class="date-meta">
+            Lee</span>
+    </span>
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-sticky-note"></i>
+        
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-calendar"></i>
+        <span class="date-meta">
+            2020/06/25</span>
+    </span>
+    
+    
+</div>
+    </div>
+    
+    <div class="post-body post-content">
+        <h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>ClassLoader 是一个重要的 Java 执行时系统组件，它负责在运行时查找和装入 Class 字节码文件。JVM 在运行时会产生三个ClassLoader：根装载器、扩展类装载器（ExtClassLoader）和系统类装载器（AppClassLoader）。其中，根装载器不是ClassLoader的子类，它使用C++编写，因此我们在 Java 中看不到它，根装载器负责装载JRE的核心类库，如JRE目标下的 rt.jar、charsets.jar 等。ExtClassLoader 和AppClassLoader 都是 ClassLoader 的子类。其中 ExtClassLoader 负责装载 JRE 目录 ext 中的 JAR 类包；AppClassLoader 负责装载 ClassPath 路径下的类包。</p>
+<ul>
+<li>根装载器，这个类加载器负责将存放在 <JAVA_HOME>\lib 目录中的。启动类加载器无法被 Java 程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委派给引导类加载器，那直接使用null代替即可。</li>
+<li>扩展类加载器（Extension ClassLoader），这个加载器由 sun.misc.Launcher$ExtClassLoader 实现，它负责加载 <JAVA_HOME>\lib\ext 目录中的，或者被 java.ext.dirs 系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器。</li>
+<li>应用程序类加载器（Application ClassLoader），这个类加载器由 sun.misc.Launcher$AppClassLoader 实现。由于这个类加载器是 ClassLoader 中的 getSystemClassLoader() 方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径（ClassPath）上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有自定义自己的类加载器，一般情况下这个就是程序中默认的类加载器。</li>
+</ul>
+<p>我们的应用程序都是由这3种类加载器互相配合进行加载的，如果有必要，还可以加入自己定义的类加载器。这些类加载器之间的关系一般为：</p>
+<p><img src="./Java%E4%B8%AD%E7%9A%84ClassLoader_1.png" alt=""></p>
+<p>这三个类装载器之间存在父子层级关系，默认情况下，使用AppClassLoader装载应用程序的类，用以下代码证明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassLoaderTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//Thread.currentThread():返回对当前正在执行的线程对象的引用。</span></span><br><span class="line">        <span class="comment">//getContextClassLoader():返回该线程的上下文ClassLoader。</span></span><br><span class="line">        ClassLoader loader = Thread.currentThread().getContextClassLoader();</span><br><span class="line">        System.out.println(<span class="string">"当前的loader:"</span> + loader);</span><br><span class="line">        System.out.println(<span class="string">"父级的loader:"</span> + loader.getParent());</span><br><span class="line">        System.out.println(<span class="string">"祖父级的loader:"</span> + loader.getParent().getParent());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当前的loader:sun.misc.Launcher$AppClassLoader@18b4aac2</span><br><span class="line">父级的loader:sun.misc.Launcher$ExtClassLoader@1d44bcfa</span><br><span class="line">祖父级的loader:null</span><br></pre></td></tr></table></figure>
+<p>通过以上的输出信息，很明显 ClassLoader 是 AppClassLoader，父 ClassLoader 是 ExtClassLoader，祖父 ClassLoader 是根类装载器，因为在 Java 中无法获得它，所以返回 null。</p>
+<p>另外，ClassLoader 的几个重要方法：</p>
+<p>Class defineClass(String name, byte[] b, int off, int len)</p>
+<p>　　将类文件的字节数组转换成JVM内部的java.lang.Class对象。字节数组可以从本地文件系统、远程网络获取。name为字节数组对应的全限定类名。</p>
+<p>Class findSystemClass(String name)</p>
+<p>　　从本地文件系统载入Class文件，如果本地文件系统不存在该Class文件，将抛出ClassNotFoundException异常。该方法是JVM默认使用的装载机制。</p>
+<p>ClassLoader getParent()</p>
+<p>　　获取类装载器的父装载器，除根装载器外，所有的类装载器都有且仅有一个父装载器，ExtClassLoader的父装载器是根装载器，因为根装载器非Java编写，所以无法获得，将返回null。</p>
+<h3 id="进阶-自定义ClassLoader"><a href="#进阶-自定义ClassLoader" class="headerlink" title="进阶 - 自定义ClassLoader"></a>进阶 - 自定义ClassLoader</h3><p>首先我们自定义一个简单的类，并编译层 class 文件，放在指定的目录下，比如 d:/test/ 目录下，类代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">"测试App"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类编译之后把编译好的 class 文件放在 d:/test/ 目录下，也就是文件路径是 d:/test/App.class，自定义 ClassLoader 代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.io.IOUtils;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.reflect.FieldUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClassLoader</span> <span class="keyword">extends</span> <span class="title">ClassLoader</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String path = <span class="string">"d:/test/"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        Class&lt;?&gt; cls = findLoadedClass(name);</span><br><span class="line">        <span class="keyword">if</span> (cls != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> cls;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!name.endsWith(<span class="string">".App"</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.loadClass(name);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InputStream is = <span class="keyword">new</span> FileInputStream(path + name.replace(<span class="string">"."</span>, <span class="string">"/"</span>) + <span class="string">".class"</span>);</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = IOUtils.toByteArray(is);</span><br><span class="line">            <span class="keyword">return</span> defineClass(name, bytes, <span class="number">0</span>, bytes.length);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.loadClass(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            MyClassLoader loader = <span class="keyword">new</span> MyClassLoader();</span><br><span class="line">            Class&lt;?&gt; cls = loader.loadClass(<span class="string">"com.wlee.test.App"</span>);</span><br><span class="line">            Field field = FieldUtils.getField(cls, <span class="string">"name"</span>, <span class="keyword">true</span>);</span><br><span class="line">            Object value = field.get(cls.newInstance());</span><br><span class="line">            System.out.println(value);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行main方法之后，自定义类加载器正常加载到类，程序最后输出：测试App。</p>
+<p>代码很简单，上面那个 main 方法，就是读取自定义的目录。其实可以直接使用 URLClassLoader 就能读取：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        URLClassLoader loader = <span class="keyword">new</span> URLClassLoader(<span class="keyword">new</span> URL[]&#123;<span class="keyword">new</span> URL(<span class="string">"file:///d:/test/"</span>)&#125;);</span><br><span class="line">        Class&lt;?&gt; cls = loader.loadClass(<span class="string">"com.wlee.test.App"</span>);</span><br><span class="line">        Field field = FieldUtils.getField(cls, <span class="string">"name"</span>, <span class="keyword">true</span>);</span><br><span class="line">        Object value = field.get(cls.newInstance());</span><br><span class="line">        System.out.println(value);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/2242648824.html" class="next-post btn btn-default" title='渐行渐远的JSP'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            渐行渐远的JSP</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+<!-- 先屏蔽掉评论
+
+<div id="comments">
+    
+<p>评论系统未开启，无法评论！</p>
+
+</div>
+
+-->
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本概念"><span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进阶-自定义ClassLoader"><span class="toc-text">进阶 - 自定义ClassLoader</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2020&nbsp;&nbsp;WorkerLee
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Lee的架构笔记">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://lili40342.github.io">
+    <!--SEO-->
+
+<meta name="keywords" content="Java,Spring,SpringBoot,SpringCloud,Oracle,MySQL,数据库,微服务,架构" />
+
+
+<meta name="description" content="开始String，StringBuffer 和 StringBuilder 直接的区别这个问题已经是一个老问题了，尤其是在面试的时候会被经常提及的问题。首先 String 类型并不是 Java ..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    另类分析String，StringBuffer和StringBuilder |
+    
+    Lee的架构笔记
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Lee的架构笔记" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<script>
+(function() {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    /./img/banner2.jpg)"
+     >
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://lili40342.github.io">
+                        Lee的架构笔记</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation">
+                            <a href="/"><i class="fa fa-home"></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://github.com/lili40342" target="_blank" rel="noopener"><i class="fa fa-github"></i>
+                                GitHub</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://juejin.im/user/5e32e0e651882526b832024f" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                掘金社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://blog.csdn.net/lili40342" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                CSDN社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/archives/"><i class="fa fa-clock-o"></i>
+                                归档</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/about/"><i class="fa fa-user-circle"></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="另类分析String，StringBuffer和StringBuilder">
+            
+            另类分析String，StringBuffer和StringBuilder
+            
+        </h1>
+        <div class="post-meta">
+	<span class="fa-wrap">
+        <i class="fa fa-user"></i>
+        <span class="date-meta">
+            Lee</span>
+    </span>
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-sticky-note"></i>
+        
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-calendar"></i>
+        <span class="date-meta">
+            2020/06/25</span>
+    </span>
+    
+    
+</div>
+    </div>
+    
+    <div class="post-body post-content">
+        <h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>String，StringBuffer 和 StringBuilder 直接的区别这个问题已经是一个老问题了，尤其是在面试的时候会被经常提及的问题。首先 String 类型并不是 Java 语言的基本类型，它是 Java 中非常重要的一个引用类型（对象）。String 字符串一旦被创建出来就不会被修改，当你想修改 StringBuffer 或者是 StringBuilder，出于效率的考量，虽然 String 可以通过 + 来创建多个对象达到字符串拼接的效果，但是这种拼接的效率相比 StringBuffer 和 StringBuilder，效率上就差了点。</p>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>上面说到，String 字符串一旦被创建出来就不会被修改，其实很好理解。我们查看 String 类的源码即可得知（代码片段）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">String</span>&gt;, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line">	......</span><br><span class="line">	......</span><br><span class="line">	......</span><br></pre></td></tr></table></figure>
+<p>上面代码其中 String 类已经被 final 修饰，用于存放字符的数组也被声明为 final，因此只能赋值一次，不可再更改。使用 final 修饰的类不能被继承、方法不能被重写、属性不能被修改。阅读了源码之后就能知道，String 类它其中的方法也是由 final 修饰的，所以，String 类就是一个典型的 Immutable 类。也由于 String 的不可变性，类似字符串拼接、字符串截取等操作都会产生新的 String 对象。所以我们在研究 String 的时候就会引入一个概念叫做“常量池”，如果再深入的话就会碰到堆与栈的问题了。研究那么深其实并没有太大的实际意义，毕竟我们都是以实用为主，所以我们只做基本性质的讨论。</p>
+<p>请看以下示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        String str1 = <span class="string">"aaa"</span>;</span><br><span class="line">        String str2 = <span class="string">"bbb"</span> + <span class="string">"ccc"</span>;</span><br><span class="line">        String str3 = str1 + <span class="string">"bbb"</span>;</span><br><span class="line">        String str4 = <span class="keyword">new</span> String(<span class="string">"aaa"</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里定义了4个 String 类型的变量，我们逐个的分析一下，这里我们可以用 JDK 自带的反编译工具对生成的 class 文件进行反汇编代码即可。</p>
+<blockquote>
+<p>javap 是 JDK 自带的反汇编工具。它的作用就是根据 class 字节码文件，反汇编出当前类对应的 code 区（汇编指令）、本地变量表、异常表和代码行偏移量映射表、常量池等等信息。<br>javap -c 就是对代码进行反汇编操作。<br>命令格式：javap -c xxxx.class</p>
+</blockquote>
+<p>下面就是我反编译之后的信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">D:\workspace_idea\string_demo\target\classes\com\wlee\test&gt;javap -c StringTest.class</span><br><span class="line"></span><br><span class="line">Compiled from &quot;StringTest.java&quot;</span><br><span class="line">public class com.wlee.test.StringTest &#123;</span><br><span class="line">  public com.wlee.test.StringTest();</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: invokespecial #1                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">       4: return</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    Code:</span><br><span class="line">       0: ldc           #2                  &#x2F;&#x2F; String aaa</span><br><span class="line">       2: astore_1</span><br><span class="line">       3: ldc           #3                  &#x2F;&#x2F; String bbbccc</span><br><span class="line">       5: astore_2</span><br><span class="line">       6: new           #4                  &#x2F;&#x2F; class java&#x2F;lang&#x2F;StringBuilder</span><br><span class="line">       9: dup</span><br><span class="line">      10: invokespecial #5                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">      13: aload_1</span><br><span class="line">      14: invokevirtual #6                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.append:(Ljava&#x2F;lang&#x2F;String;)Ljava&#x2F;lang&#x2F;StringBuilder;</span><br><span class="line">      17: ldc           #7                  &#x2F;&#x2F; String bbb</span><br><span class="line">      19: invokevirtual #6                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.append:(Ljava&#x2F;lang&#x2F;String;)Ljava&#x2F;lang&#x2F;StringBuilder;</span><br><span class="line">      22: invokevirtual #8                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.toString:()Ljava&#x2F;lang&#x2F;String;</span><br><span class="line">      25: astore_3</span><br><span class="line">      26: new           #9                  &#x2F;&#x2F; class java&#x2F;lang&#x2F;String</span><br><span class="line">      29: dup</span><br><span class="line">      30: ldc           #2                  &#x2F;&#x2F; String aaa</span><br><span class="line">      32: invokespecial #10                 &#x2F;&#x2F; Method java&#x2F;lang&#x2F;String.&quot;&lt;init&gt;&quot;:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">      35: astore        4</span><br><span class="line">      37: return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解释一下（默认情况下，常量池为空时）：</p>
+<p><strong>String str1 = “aaa”</strong>，str1 创建了几个对象？字符串在创建对象时，会在常量池中看有没有 aaa 这个字符串。如果没有此时还会在常量池中创建一个，如果有则不创建。默认情况下所以会创建一个对象。</p>
+<p><strong>String str2 = “bbb” + “ccc”</strong>，那么这个 str2 会创建几个对象？其实我们可以通过上述的反编译信息可以得知，str2 会直接创建一个 bbbccc 的对象。</p>
+<p><strong>String str3 = str1 + “bbb”</strong>，这个 str3 又是如何工作的？再看一下反编译信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    Code:</span><br><span class="line">       0: ldc           #2                  &#x2F;&#x2F; String aaa</span><br><span class="line">       2: astore_1</span><br><span class="line">       3: ldc           #3                  &#x2F;&#x2F; String bbbccc</span><br><span class="line">       5: astore_2</span><br><span class="line">       6: new           #4                  &#x2F;&#x2F; class java&#x2F;lang&#x2F;StringBuilder</span><br><span class="line">       9: dup</span><br><span class="line">      10: invokespecial #5                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">      13: aload_1</span><br><span class="line">      14: invokevirtual #6                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.append:(Ljava&#x2F;lang&#x2F;String;)Ljava&#x2F;lang&#x2F;StringBuilder;</span><br><span class="line">      17: ldc           #7                  &#x2F;&#x2F; String bbb</span><br><span class="line">      19: invokevirtual #6                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.append:(Ljava&#x2F;lang&#x2F;String;)Ljava&#x2F;lang&#x2F;StringBuilder;</span><br><span class="line">      22: invokevirtual #8                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuilder.toString:()Ljava&#x2F;lang&#x2F;String;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很明显，str3 先创建了一个 StringBuilder 对象并执行了初始化，然后在 str3 中执行 + 号其实是执行了 StringBuilder 的 append() 操作，最后还调用了一个 StringBuilder 的 toString 方法。说白了，String str3 = str1 + “bbb” 就等价于 String str3 = new StringBuilder().append(str1).append(“bbb”).toString()，所以 str3 执行结束后，相当于创建了3个对象。</p>
+<p><strong>String str4 = new String(“aaa”)</strong>，最后就是 str4 了，这个就很好理解了，在创建这个对象时因为使用了 new 关键字，所以肯定会在堆中创建一个对象。然后会在常量池中看有没有 aaa 这个字符串，如果没有此时还会在常量池中创建一个，如果有则不创建。所以可能是创建一个或者两个对象，但是一定存在两个对象。</p>
+<p>String 就讲到这里吧，看完上面的分析发现 String 对象竟然和 StringBuilder 有关联，String 对象底层是使用了 StringBuilder 对象的 append 方法进行字符串进行拼接的。我们就不再深入讨论“堆与栈”的问题了，因为它已经是老生常谈的问题了。</p>
+<h3 id="StringBuffer"><a href="#StringBuffer" class="headerlink" title="StringBuffer"></a>StringBuffer</h3><p>StringBuffer 代表一个可变的字符串序列，当一个 StringBuffer 被创建以后，通过 StringBuffer 的一系列方法可以实现字符串的拼接、截取等操作。一旦通过 StringBuffer 生成了最终想要的字符串后，就可以调用其 toString 方法来生成一个新的字符串。请看如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StringBuffer strBuffer = <span class="keyword">new</span> StringBuffer(<span class="string">"123"</span>);</span><br><span class="line">        strBuffer.append(<span class="string">"abc"</span>);</span><br><span class="line">        System.out.println(strBuffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们将这个类的 class 文件反编译一下看到如下信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">D:\workspace_idea\string_demo\target\classes\com\wlee\test&gt;javap -c StringTest.class</span><br><span class="line"></span><br><span class="line">Compiled from &quot;StringTest.java&quot;</span><br><span class="line">public class com.wlee.test.StringTest &#123;</span><br><span class="line">  public com.wlee.test.StringTest();</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: invokespecial #1                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">       4: return</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    Code:</span><br><span class="line">       0: new           #2                  &#x2F;&#x2F; class java&#x2F;lang&#x2F;StringBuffer</span><br><span class="line">       3: dup</span><br><span class="line">       4: ldc           #3                  &#x2F;&#x2F; String 123</span><br><span class="line">       6: invokespecial #4                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuffer.&quot;&lt;init&gt;&quot;:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">       9: astore_1</span><br><span class="line">      10: aload_1</span><br><span class="line">      11: ldc           #5                  &#x2F;&#x2F; String abc</span><br><span class="line">      13: invokevirtual #6                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;StringBuffer.append:(Ljava&#x2F;lang&#x2F;String;)Ljava&#x2F;lang&#x2F;StringBuffer;</span><br><span class="line">      16: pop</span><br><span class="line">      17: return</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上述反编译信息可以看出 StringBuffer 在 append 的时候，并不会自动调用 toString 方法，这和之前 String 对象 在用 + 拼接的时候会自动调用 toString 方法和截然不同。其实很好理解，这里是 StringBuffer 对象，如果你想从 StringBuffer 对象获取 String 对象，你必须手动的进行调用 toString 方法。</p>
+<p>我们也可以通过源码看到 StringBuffer 是线程安全的，它在字符串拼接上面直接使用 synchronized 关键字加锁，从而保证了线程安全性。</p>
+<h3 id="StringBuilder"><a href="#StringBuilder" class="headerlink" title="StringBuilder"></a>StringBuilder</h3><p>StringBuilder 是在 Java5 中被提出，它其实是和 StringBuffer 几乎一样，它和 StringBuffer 之间的最大不同在于 StringBuilder 是非线程安全的（不能同步访问），所以在常规情况下 StringBuilder 相较于 StringBuffer 有速度优势，并且为什么 + 号操作符使用 StringBuilder 作为拼接条件而不是使用 StringBuffer 呢？我觉得就是这个所谓加锁耗时会影响性能，所以 String 底层使用 StringBuilder 作为字符串拼接，所以多数情况下建议使用 StringBuilder 类。</p>
+<p>我们再用一个段代码来说明 StringBuilder 的效率：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String s = <span class="string">"123"</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">            s += <span class="string">"ab"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码根据我们之前分析的，String 在使用 + 拼接时，JVM 会隐式创建 StringBuilder 对象，在大部分情况下不会造成效率的损失，不过在进行大量循环拼接字符串时就不不行了，按照刚才反编译的信息看，上述代码其实就是成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s &#x3D; &quot;123&quot;;</span><br><span class="line">for(int i &#x3D; 0; i &lt; 10000; i++) &#123;</span><br><span class="line">     s &#x3D; (new StringBuilder()).append(s).append(&quot;ab&quot;).toString();    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在每次进行循环时，都会创建一个 StringBuilder 对象，每次都会把一个新的字符串元素 ab 拼接到 123 的后面，就成了如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">new StringBuilder()		String s &#x3D; 123ab;</span><br><span class="line">new StringBuilder()		String s &#x3D; 123abab;</span><br><span class="line">new StringBuilder()		String s &#x3D; 123ababab;</span><br><span class="line">new StringBuilder()		String s &#x3D; 123abababab;</span><br><span class="line">new StringBuilder()		String s &#x3D; 123ababababab;</span><br><span class="line">new StringBuilder()		String s &#x3D; 123abababababab;</span><br><span class="line">new StringBuilder()		String s &#x3D; 123ababababababab;</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>每次都会创建一个 StringBuilder ，并把引用赋给 StringBuilder 对象，这样在创建完毕后，内存中就会多了很多  StringBuilder 的无用对象。这样由于大量 StringBuilder 创建在内存中，肯定会造成效率的损失，所以在这种情况下建议在循环体外创建一个 StringBuilder 对象调用 append() 方法手动拼接。如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.wlee.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StringBuilder strBuilder = <span class="keyword">new</span> StringBuilder(<span class="string">"123"</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            strBuilder.append(<span class="string">"ab"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        strBuilder.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码中，只会创建一个 StringBuilder 对象，每次循环都会使用这个 StringBuilder 对象进行拼接，因此提高了拼接效率。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>以上对 String，StringBuffer 和 StringBuilder 的分析，并没有像其他网友那样对它们进行用法以及功能上的比对，只是相互之间进行了分析而已，正常没有特别要求的情况下，StringBuffer 和 StringBuilder 用哪个都可以，StringBuffer 与 StringBuilder 最大的区别就是 StringBuffer 可以在多线程场景下使用，StringBuffer 内部有大部分方法都加了 synchronized 锁。在单线程场景下效率比较低，因为有锁的开销。</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/2242648824.html" class="pre-post btn btn-default" title='渐行渐远的JSP'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            渐行渐远的JSP</span>
+    </a>
+    
+    
+    <a href="/2784153059.html" class="next-post btn btn-default" title='Java中的泛型'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Java中的泛型</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+<!-- 先屏蔽掉评论
+
+<div id="comments">
+    
+<p>评论系统未开启，无法评论！</p>
+
+</div>
+
+-->
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#开始"><span class="toc-text">开始</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#String"><span class="toc-text">String</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#StringBuffer"><span class="toc-text">StringBuffer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#StringBuilder"><span class="toc-text">StringBuilder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结语"><span class="toc-text">结语</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2020&nbsp;&nbsp;WorkerLee
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
