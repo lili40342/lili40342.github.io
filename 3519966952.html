@@ -1,0 +1,318 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Lee的架构笔记">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://lili40342.github.io">
+    <!--SEO-->
+
+<meta name="keywords" content="Java" />
+
+
+<meta name="description" content="
+    
+
+
+开始设计模式（Design pattern），提供了在软件开发过程中面临的一些问题的最佳解决方案，是Java开发者必修的一门课程。主要分创建型模式、结构型模式和行为型模式。其中接..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Java中的单例模式 |
+    
+    Lee的架构笔记
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Lee的架构笔记" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<script>
+(function() {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    /./img/banner2.jpg)"
+     >
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://lili40342.github.io">
+                        Lee的架构笔记</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation">
+                            <a href="/"><i class="fa fa-home"></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://github.com/lili40342" target="_blank" rel="noopener"><i class="fa fa-github"></i>
+                                GitHub</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://juejin.im/user/5e32e0e651882526b832024f" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                掘金社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://blog.csdn.net/lili40342" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                CSDN社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/archives/"><i class="fa fa-clock-o"></i>
+                                归档</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/about/"><i class="fa fa-user-circle"></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Java中的单例模式">
+            
+            Java中的单例模式
+            
+        </h1>
+        <div class="post-meta">
+	
+	<span class="fa-wrap">
+        <i class="fa fa-user"></i>
+        <span class="date-meta">
+            Lee</span>
+    </span>
+	
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-book"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-link" href="/tags/Java/" rel="tag">Java</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-calendar"></i>
+        <span class="date-meta">
+            2020/06/27</span>
+    </span>
+    
+    
+</div>
+    </div>
+    
+    <div class="post-body post-content">
+        <div align="center">
+    <img src="/img/post/java.png" border="0"/>
+</div>
+
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>设计模式（Design pattern），提供了在软件开发过程中面临的一些问题的最佳解决方案，是Java开发者必修的一门课程。主要分创建型模式、结构型模式和行为型模式。其中接下来我们要讨论的是单例模式，属于创建型模式。</p>
+<p>单例模式，说白了就是类只有一个实例，这个类提供了一个访问其唯一的对象的方式，可以直接访问，不需要进行实例化该类的对象。说到了单例模式，就不得不提“static”这个关键字了，没有它单例模式就不能实现。如果你对“static关键字”有兴趣，可以看移步<a href="/3240488332.html">《Java中的static关键字》</a></p>
+<p>实现单例模式有很多种，每种方法各有利弊，下面我们来看下有哪几种实现方式吧：</p>
+<h3 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h3><p>要想玩单例模式，第一件不能忘了的事就是“构造方法私有化”，说白了就是用“private”替换“public”来修饰构造方法，让这个类不能通过“new”的方式来进行实例。</p>
+<h4 id="单例-饿汉模式"><a href="#单例-饿汉模式" class="headerlink" title="单例 - 饿汉模式"></a>单例 - 饿汉模式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方式之所以成为饿汉模式，就是指全局的单例实例在类装载时构建，所以类加载较慢，但获取对象实例的速度快（注：这里的快与慢是相对来讲的）。</p>
+<h4 id="单例-懒汉模式（线程不安全）"><a href="#单例-懒汉模式（线程不安全）" class="headerlink" title="单例 - 懒汉模式（线程不安全）"></a>单例 - 懒汉模式（线程不安全）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种实现方式是最基础的实现方式，线程上下文单例，不需要共享给所有线程，也不需要加“synchronize”之类的锁，懒汉模式中同样声明一个静态对象，在用户第一次调用时初始化，加载时需要实例化，相对稍微会慢一些，而且在多线程下不能正常工作。</p>
+<h4 id="单例-懒汉模式（线程安全）"><a href="#单例-懒汉模式（线程安全）" class="headerlink" title="单例 - 懒汉模式（线程安全）"></a>单例 - 懒汉模式（线程安全）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种懒汉模式很明显，我们多用了一个“synchronized”来修饰获取类实例的静态方法，这种写法保证线程安全，相对性能很低，而且大部分情况下我们是用不到同步的，所以不建议用这种模式。</p>
+<h4 id="单例-双检锁式"><a href="#单例-双检锁式" class="headerlink" title="单例 - 双检锁式"></a>单例 - 双检锁式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> singleton;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>双检锁式是在懒汉式基础上利用“synchronize”关键字和“volatile”关键字确保第一次创建时没有线程间竞争而产生多个实例，仅第一次创建时同步，性能相对较高。</p>
+<h4 id="单例-枚举单例"><a href="#单例-枚举单例" class="headerlink" title="单例 - 枚举单例"></a>单例 - 枚举单例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton &#123;</span><br><span class="line">    instance;</span><br><span class="line">    ...</span><br><span class="line">    ...</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们还可以用Java中的枚举，因为Java中枚举类本身也是一种单例模式，枚举实例的创建是线程安全的，并且在任何情况下都是单例。枚举单例很简单，但是大部分应用开发很少用枚举，可读性并不是很高，不建议用。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>至此我总结了大概有5种方式可以用来创建单例模式，其实在我们的开发过程中并不是只有这5种。包括还可以通过静态内部类来创建单例模式，通过容器（HashMap）也可以，等等。</p>
+<p><strong>显然单例模式的要点有三个：</strong></p>
+<ul>
+<li>一是某个类只能有一个实例。</li>
+<li>二是它必须自行创建这个实例。</li>
+<li>三是它必须自行向整个系统提供这个实例。</li>
+</ul>
+<p><strong>从具体实现角度来说，就是以下三点：</strong></p>
+<ul>
+<li>一是单例模式的类只提供私有的构造函数。</li>
+<li>二是类定义中含有一个该类的静态私有对象。</li>
+<li>三是该类提供了一个静态的公有的函数用于创建或获取它本身的静态私有对象。</li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/2137468619.html" class="next-post btn btn-default" title='是否还记得当年的Struts和Struts2框架'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            是否还记得当年的Struts和Struts2框架</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+<!-- 先屏蔽掉评论
+
+<div id="comments">
+    
+<p>评论系统未开启，无法评论！</p>
+
+</div>
+
+-->
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#开始"><span class="toc-text">开始</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#单例-饿汉模式"><span class="toc-text">单例 - 饿汉模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#单例-懒汉模式（线程不安全）"><span class="toc-text">单例 - 懒汉模式（线程不安全）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#单例-懒汉模式（线程安全）"><span class="toc-text">单例 - 懒汉模式（线程安全）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#单例-双检锁式"><span class="toc-text">单例 - 双检锁式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#单例-枚举单例"><span class="toc-text">单例 - 枚举单例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2020&nbsp;&nbsp;WorkerLee
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

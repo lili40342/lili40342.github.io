@@ -1,0 +1,353 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Lee的架构笔记">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://lili40342.github.io">
+    <!--SEO-->
+
+<meta name="keywords" content="Java" />
+
+
+<meta name="description" content="
+    
+
+
+写在前面前阵子看到一篇有关于Java中static的使用和介绍，讲的比较全面。近几日忽然想起早先工作碰到的有关static的相关问题，自己也总结一下吧。
+static是我们项目中..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Java中的“static“关键字 |
+    
+    Lee的架构笔记
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Lee的架构笔记" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<script>
+(function() {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    /./img/banner2.jpg)"
+     >
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://lili40342.github.io">
+                        Lee的架构笔记</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation">
+                            <a href="/"><i class="fa fa-home"></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://github.com/lili40342" target="_blank" rel="noopener"><i class="fa fa-github"></i>
+                                GitHub</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://juejin.im/user/5e32e0e651882526b832024f" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                掘金社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://blog.csdn.net/lili40342" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                CSDN社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/archives/"><i class="fa fa-clock-o"></i>
+                                归档</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/about/"><i class="fa fa-user-circle"></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Java中的“static“关键字">
+            
+            Java中的“static“关键字
+            
+        </h1>
+        <div class="post-meta">
+	
+	<span class="fa-wrap">
+        <i class="fa fa-user"></i>
+        <span class="date-meta">
+            Lee</span>
+    </span>
+	
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-book"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-link" href="/tags/Java/" rel="tag">Java</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-calendar"></i>
+        <span class="date-meta">
+            2020/06/27</span>
+    </span>
+    
+    
+</div>
+    </div>
+    
+    <div class="post-body post-content">
+        <div align="center">
+    <img src="/img/post/java.png" border="0"/>
+</div>
+
+<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>前阵子看到一篇有关于Java中static的使用和介绍，讲的比较全面。近几日忽然想起早先工作碰到的有关static的相关问题，自己也总结一下吧。</p>
+<p>static是我们项目中经常用到的关键字，也是Java中非常重要的一个关键字，static可以修饰变量、方法、做静态代码块、静态导包等，下面我们就来具体聊一聊这个关键字。</p>
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>一提到static的时候，第一时间你会想到什么？！对了你可能第一时间就能想到main方法，main方法为什么是static修饰的？？？如果你不太清楚，带着疑问继续向下看吧。</p>
+<h3 id="static修饰变量"><a href="#static修饰变量" class="headerlink" title="static修饰变量"></a>static修饰变量</h3><p>static的意思是什么？你会脱口而出“静态”，static关键字表示的概念就是“全局的，静态的”大概的意思，用它修饰的变量我们都会称作为“静态变量”。</p>
+<div align="center"><img src="/3240488332/1.png" class=""></div>
+
+<p>静态变量也被称作为类变量，static修饰过的变量是属于这个类所有的。是不是有点不太明白什么意思？这其实就是说，static关键字只能定义在类中，而不能定义在方法中。请看下面的截图：</p>
+<div align="center"><img src="/3240488332/2.png" class=""></div>
+<div align="center"><img src="/3240488332/3.png" class=""></div>
+
+<p>从上图可以看到，很明显不能在方法中定义static变量，即使给方法加上static也不行。</p>
+<p>既然static修饰的变量是属于这个类所有，那么就可以直接通过类来直接调用static修饰的变量，它不需要手动实例化类进行调用（即：类名.静态变量）。如下图：（必要时您还得注意变量的public或者private等，这里我们不讨论了。）</p>
+<div align="center"><img src="/3240488332/4.png" class=""></div>
+
+<p><strong>static修饰的变量有何用途</strong></p>
+<p>早先在我们的项目中曾经如此应用static修饰的变量，就是项目启动的时候，我们加载一些重要的系统数据，如不常修改的数据，字典数据等，加载赋值到一个类的static修饰的变量，大家都知道static修饰的变量在赋值之后，如果不对它进行第二次赋值，它的数据将一直保持第一次赋值的数据，直到服务器停止，这样方便数据调用。当然还有其他应用，我们也不做研究了。</p>
+<p><strong>有关于变量的几个概念：</strong></p>
+<ul>
+<li>定义在方法<strong>外</strong>，代码块<strong>外</strong>，构造方法<strong>外</strong>的变量被称为成员变量。</li>
+<li>定义在方法<strong>里</strong>，代码块<strong>里</strong>，构造方法<strong>里</strong>的变量被称为局部变量。</li>
+<li>定义在方法参数<strong>中</strong>的变量称作参数。</li>
+</ul>
+<h3 id="static修饰方法"><a href="#static修饰方法" class="headerlink" title="static修饰方法"></a>static修饰方法</h3><p>static修饰方法，被static修饰的方法我们称作为“静态方法”，其实说白了就是在一个方法上加上static关键字进行修饰。在没有创建任何对象的前提下，通过类本身来就可以调用static修饰的方法，我们平时也把static修饰的方法叫做这个类的类方法，实际上是static方法的主要用途。</p>
+<div align="center"><img src="/3240488332/5.png" class=""></div>
+
+<p>如上图所示，“staticFunction”是static修饰的静态方法，所以可以直接使用“类名.方法名”进行调用，这个调用其实就和之前咱们说的“类名.变量名”的调用方式，是一个道理。</p>
+<p>static修饰方法讲到这里了，你大概就应该清楚了main方法为什么是用static修饰的了。很明显，因为程序执行main方法的时候没有创建任何对象，因此只能通过类名来访问，所以main方法用static修饰。</p>
+<p>那通过这个static修饰main方法，我们其实也可以延伸一下技术，就是单例模式。熟悉单例模式的都知道，单例模式就是和static修饰的方法有关系，这里我们不做研究了，有兴趣的小伙伴可以点击进入<a href="/3519966952.html">《Java中的单例模式》</a>。</p>
+<p><strong>static修饰方法的注意</strong></p>
+<ul>
+<li>第一恶就是最上面刚说的，不用创建对象，直接类名.变量名即可调用和访问。</li>
+<li>static修饰的方法内部是不能调用非静态方法的。</li>
+<li>非静态方法内部是可以调用static静态方法。</li>
+</ul>
+<h3 id="static修饰代码块"><a href="#static修饰代码块" class="headerlink" title="static修饰代码块"></a>static修饰代码块</h3><p>首先代码块是分为两种的，一种是使用{ }代码块，另外一种就是用static{ }的，我们称作“静态代码块”。static静态代码块是可以放在一个类的任何地方，还可以有多个static静态代码块。类初次被加载的时候，会按照static静态代码块的顺序来执行，每个static静态代码块只能执行一次，而且还是在类加载的时候就只执行一次。</p>
+<div align="center"><img src="/3240488332/6.png" class=""></div>
+执行结果：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hi static1 run</span><br><span class="line">hi static3 run</span><br><span class="line">hi static2 run</span><br><span class="line">staticFunction is run</span><br></pre></td></tr></table></figure>
+
+<p>如上图代码和结果，可以看到static静态代码块可以有多个，可以放在任意位置，而且是在类加载的时候只执行一次，而且还是自上而下顺序执行。</p>
+<h3 id="static用作静态内部类"><a href="#static用作静态内部类" class="headerlink" title="static用作静态内部类"></a>static用作静态内部类</h3><p>在说静态内部类之前，我们先普及一下内部类的分类，一共分为普通内部类、局部内部类、静态内部类、匿名内部类四种。说白了，静态内部类就是用static修饰的内部类，静态内部类可以包含静态成员变量，也可以包含非静态成员变量，但是在非静态内部类中不可以声明静态成员变量。</p>
+<p>静态内部类有许多作用，由于非静态内部类的实例创建需要有外部类对象的引用，所以非静态内部类对象的创建必须依托于外部类的实例，而静态内部类的实例创建只需依托外部类，并且由于非静态内部类对象持有了外部类对象的引用，因此非静态内部类可以访问外部类的非静态成员，而静态内部类只能访问外部类的静态成员。</p>
+<p>由于静态内部类用的较少，我们不做过多阐述了，如果您有兴趣可以移步<a href="/3937839986.html">《Java中的内部类》</a>。</p>
+<h3 id="静态导入包"><a href="#静态导入包" class="headerlink" title="静态导入包"></a>静态导入包</h3><p>首先我们平时在用到一个类的时候，比如用到ArrayList，我们就需要导入java.util.ArrayList，那我们的代码就是“import java.util.ArrayList;”，再简单不过了。那什么是静态导入包？静态导入包就是使用“import static”用来导入某个类或者某个包中的静态方法或者静态变量。</p>
+<div align="center"><img src="/3240488332/7.png" class=""></div>
+<div align="center"><img src="/3240488332/8.png" class=""></div>
+
+<p>大家上看以上代码，首先我定义了一个类叫“StaticDemo”，其中我定义了静态变量“i”和静态方法“test”。然后我在第二个类“StaticTest”中，我利用“import static”的方式导入了“StaticDemo”的所有有关静态的变量和方法，然后我就可以直接进行调用了。看到这好像并没有特殊的地方，感觉就像多一此举，直接用“类名.变量”或者“类名.方法”不就行了，对你说的没错，我们这里只是讲什么是静态导入包。</p>
+<h3 id="static变量的生命周期"><a href="#static变量的生命周期" class="headerlink" title="static变量的生命周期"></a>static变量的生命周期</h3><p>static变量的生命周期与类的生命周期相同，随类的加载而创建，随类的销毁而销毁；普通成员变量和其所属的生命周期相同。其实到这就是文章最开始的地方我说的那个静态变量的用途就是利用了这一点。</p>
+<h3 id="static和序列化"><a href="#static和序列化" class="headerlink" title="static和序列化"></a>static和序列化</h3><p>Java的序列化简单说就是为了保存在内存中的各种对象的状态（也就是实例变量，不是方法），并且可以把保存的对象状态再读出来。虽然你可以用你自己的各种各样的方法来保存object states，但是Java给你提供一种应该比你自己好的保存对象状态的机制，那就是序列化。</p>
+<p>但是static修饰的变量不能被序列化，static成员不属于对象实例，属于类级别的，所以不能序列化，当然也可以用“transient”定义来强制不能序列化。</p>
+<h3 id="static经常用作日志打印"><a href="#static经常用作日志打印" class="headerlink" title="static经常用作日志打印"></a>static经常用作日志打印</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOG = LogFactory.getLogger(<span class="string">"StaticTest.class"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>以上代码我想大家是经常看到吧，打印日志。当然去掉“final”和“static”是没有问题的，都可以运行，都是可以打印日志。但是很明显去掉了“final”和“static”之后，对于每个类的实例化对象都会拥有一个“LOG”，那创建了100个、1000个或者更多类的实例对象，则会多出100个、1000个甚至更多的“Logger”对象，不多说了，肯定会造成资源的浪费.因此通常会将“Logger”对象声明为static，这样能减少对内存资源的占用。</p>
+<h3 id="最后一个令人想不到的问题“类的构造器（构造方法）是否是static的？”"><a href="#最后一个令人想不到的问题“类的构造器（构造方法）是否是static的？”" class="headerlink" title="最后一个令人想不到的问题“类的构造器（构造方法）是否是static的？”"></a>最后一个令人想不到的问题“类的构造器（构造方法）是否是static的？”</h3><p>这个问题谁没事干了琢磨这个去，说实话我也不知道，但是我隐约记得我一个老师曾经告诉过我“构造器（构造方法）虽然没有用static修饰，但是实际上是static的”，那为什么构造器（构造方法）不能加“static”修饰？构造器（构造方法）是为了初始化对象的，用来生成实例，那就不能用“static”修饰，还有就是刚才说的，它本身就是“static”，那么既然是“static”的为什么还能用来实例化对象？！这个？？？！！！，emmm！！！？？？，有兴趣的朋友可以自行研究研究了。</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/3937839986.html" class="pre-post btn btn-default" title='Java中的内部类'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            Java中的内部类</span>
+    </a>
+    
+    
+    <a href="/2358994905.html" class="next-post btn btn-default" title='Lombok的分析与讨论'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Lombok的分析与讨论</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+<!-- 先屏蔽掉评论
+
+<div id="comments">
+    
+<p>评论系统未开启，无法评论！</p>
+
+</div>
+
+-->
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#写在前面"><span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开始"><span class="toc-text">开始</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static修饰变量"><span class="toc-text">static修饰变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static修饰方法"><span class="toc-text">static修饰方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static修饰代码块"><span class="toc-text">static修饰代码块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static用作静态内部类"><span class="toc-text">static用作静态内部类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#静态导入包"><span class="toc-text">静态导入包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static变量的生命周期"><span class="toc-text">static变量的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static和序列化"><span class="toc-text">static和序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static经常用作日志打印"><span class="toc-text">static经常用作日志打印</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最后一个令人想不到的问题“类的构造器（构造方法）是否是static的？”"><span class="toc-text">最后一个令人想不到的问题“类的构造器（构造方法）是否是static的？”</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2020&nbsp;&nbsp;WorkerLee
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

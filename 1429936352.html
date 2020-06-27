@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Lee的架构笔记">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://lili40342.github.io">
+    <!--SEO-->
+
+<meta name="keywords" content="Java" />
+
+
+<meta name="description" content="
+    
+
+
+不多说了，直接步入主题。
+什么是JPA？全称Java Persistence API，可以通过注解或者XML描述（对象-关系表）之间的映射关系，并将实体对象持久化到数据库中。
+它..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    JPA、Hibernate和Spring Data JPA |
+    
+    Lee的架构笔记
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Lee的架构笔记" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<script>
+(function() {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    /./img/banner2.jpg)"
+     >
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://lili40342.github.io">
+                        Lee的架构笔记</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation">
+                            <a href="/"><i class="fa fa-home"></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://github.com/lili40342" target="_blank" rel="noopener"><i class="fa fa-github"></i>
+                                GitHub</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://juejin.im/user/5e32e0e651882526b832024f" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                掘金社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="https://blog.csdn.net/lili40342" target="_blank" rel="noopener"><i class="fa fa-file-code-o"></i>
+                                CSDN社区</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/archives/"><i class="fa fa-clock-o"></i>
+                                归档</a>
+                        </li>
+                        
+                        <li role="presentation">
+                            <a href="/about/"><i class="fa fa-user-circle"></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="JPA、Hibernate和Spring Data JPA">
+            
+            JPA、Hibernate和Spring Data JPA
+            
+        </h1>
+        <div class="post-meta">
+	
+	<span class="fa-wrap">
+        <i class="fa fa-user"></i>
+        <span class="date-meta">
+            Lee</span>
+    </span>
+	
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-book"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-link" href="/tags/Java/" rel="tag">Java</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-calendar"></i>
+        <span class="date-meta">
+            2020/06/27</span>
+    </span>
+    
+    
+</div>
+    </div>
+    
+    <div class="post-body post-content">
+        <div align="center">
+    <img src="/img/post/java.png" border="0"/>
+</div>
+
+<p>不多说了，直接步入主题。</p>
+<h3 id="什么是JPA？"><a href="#什么是JPA？" class="headerlink" title="什么是JPA？"></a>什么是JPA？</h3><p>全称Java Persistence API，可以通过注解或者XML描述（对象-关系表）之间的映射关系，并将实体对象持久化到数据库中。</p>
+<p>它为我们提供了什么：</p>
+<ol>
+<li>ORM映射数据，JPA支持XML和注解两种数据的形式，数据描述对象和表之间的映射关系，框架据此将实体对象持久化到数据库表中。</li>
+<li>JPA的API，用来操作实体对象，执行CRUD操作，框架在后台替我们完成所有的事情，开发者从繁琐的JDBC和SQL代码中解脱出来。</li>
+<li>查询语言，通过面向对象而非面向数据库的查询语言查询数据，避免程序的SQL语句紧密耦合。</li>
+</ol>
+<h3 id="Hibernate！"><a href="#Hibernate！" class="headerlink" title="Hibernate！"></a>Hibernate！</h3><p>说到这里了，JPA其实就是一种规范，也就是说JPA仅仅定义了一些接口，而接口是需要实现才能工作的。所以底层需要某种实现，而Hibernate就是实现了JPA接口的ORM框架。</p>
+<p>说白了吧，JPA是一套ORM规范，Hibernate实现了JPA规范！</p>
+<h3 id="什么是Spring-Data-JPA？"><a href="#什么是Spring-Data-JPA？" class="headerlink" title="什么是Spring Data JPA？"></a>什么是Spring Data JPA？</h3><p>Spring Data JPA是Spring提供的一套简化JPA开发的框架，按照约定好的写Dao层接口，就可以在不写接口实现的情况下，实现对数据库的访问和操作。同时提供了很多除了CRUD之外的功能，如分页、排序、复杂查询等等。</p>
+<h3 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot!"></a>SpringBoot!</h3><p>SpringBoot集成Spring Data JPA很简单，只需两步：<br>第一步：导入maven</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>第二步：配置jpa信息</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">    <span class="attr">datasource:</span></span><br><span class="line">        <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">        <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost/xxx?useSSL=false&amp;characterEncoding=utf8&amp;serverTimezone=GMT%2B8</span></span><br><span class="line">        <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">password:</span> <span class="number">12345</span></span><br><span class="line"> </span><br><span class="line">    <span class="attr">jpa:</span></span><br><span class="line">        <span class="attr">database:</span> <span class="string">mysql</span></span><br><span class="line">        <span class="attr">show-sql:</span> <span class="literal">true</span></span><br><span class="line">        <span class="attr">hibernate:</span></span><br><span class="line">            <span class="attr">ddl-auto:</span> <span class="string">update</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处。
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/2137468619.html" class="pre-post btn btn-default" title='是否还记得当年的Struts和Struts2框架'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            是否还记得当年的Struts和Struts2框架</span>
+    </a>
+    
+    
+    <a href="/1543470278.html" class="next-post btn btn-default" title='Java中的代理模式'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Java中的代理模式</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+<!-- 先屏蔽掉评论
+
+<div id="comments">
+    
+<p>评论系统未开启，无法评论！</p>
+
+</div>
+
+-->
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是JPA？"><span class="toc-text">什么是JPA？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hibernate！"><span class="toc-text">Hibernate！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是Spring-Data-JPA？"><span class="toc-text">什么是Spring Data JPA？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SpringBoot"><span class="toc-text">SpringBoot!</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2020&nbsp;&nbsp;WorkerLee
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
